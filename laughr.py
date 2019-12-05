@@ -6,6 +6,8 @@ import math
 from glob import glob
 import argparse
 import os
+import csv
+from pydub import AudioSegment
 # NOTE: keras is imported later when needed, to improve responsiveness
 # For example, if invalid arguments are passed, the program executes faster.
 
@@ -138,7 +140,23 @@ class LaughRemover(object):
     def remove_laughs(self, infile, outfile):
         rc = RawClip3(infile)
         rc.laughs = self.model.predict(rc.build_features())
-        self._apply_laughs_array(rc.y, rc.sr, outfile, rc.laughs[:, 1])
+
+        #-----------------------------------------
+        AudioFile = AudioSegment.from_wav(infile)
+        AudioLength = AudioFile.__len__()/1000
+
+        laughs_count = 0
+        for i in rc.laughs:
+            if i[0] >= 0.8:
+                laughs_count +=1
+
+        with open("C:\\Users\\Will\\Documents\\WILL_FLASH_files\\GitHub_Repos\\Stats_Project\\Laughter_master_list.csv",'a',newline='') as csvFile:
+            writer = csv.writer(csvFile)
+            writer.writerow([infile[infile.rfind('/')+1:-4], laughs_count/len(rc.laughs), (laughs_count/len(rc.laughs))*AudioLength])
+            csvFile.close()
+        #-----------------------------------------
+
+        #self._apply_laughs_array(rc.y, rc.sr, outfile, rc.laughs[:, 1])
         return rc
 
     def _apply_laughs_array(self, y, sr, outfile, laughs):

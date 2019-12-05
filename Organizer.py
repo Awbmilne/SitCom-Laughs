@@ -36,51 +36,13 @@ output_directory = output_directory + "/"
 
 list_of_episodes = os.listdir(directory_of_episodes)
 
-try:
-    if args.silence[0] and args.silence[1]:
-        with open(laugh_list, 'w') as csvFile:
-            writer = csv.writer(csvFile)
-            writer.writerow(["File Name","Seconds of Laughter","Number of segments"])
-            csvFile.close()
-except: None
 
 for episode in list_of_episodes:
-    print("\n------------------------\nRunning: " + episode[0:-4])
+    print("\n#################################\n     Running: " + episode[0:-4] + '\n')
     
     if args.test:
         print('python "' + laugher + '" --model "' + model_path + '" --mute-laughs "' + directory_of_episodes + episode + '" "' + output_directory + episode[0:-4] + '_laughless.wav' + '"')
     
     else:
         #print('python "' + laugher + '" --model "' + model_path + '" --mute-laughs "' + directory_of_episodes + episode + '" "' + output_directory + episode[0:-4] + '_laughless.wav' + '"')
-        try:
-            file = open(output_directory + episode[0:-4] + '_laughless.wav','r')
-            file.close()
-        except:
-            os.system('python "' + laugher + '" --model "' + model_path + '" --mute-laughs "' + directory_of_episodes + episode + '" "' + output_directory + episode[0:-4] + '_laughless.wav' + '"')
-        
-        try:
-            if args.silence[0] and args.silence[1]:
-                #print('python "' + args.silence[0] + '" --arguments "' + output_directory + episode[0:-4] + '_laughless.wav' + '" "' + laugh_list + '" --batch 1')
-                os.system('python "' + args.silence[0] + '" --arguments "' + output_directory + episode[0:-4] + '_laughless.wav' + '" "' + laugh_list + '" --batch 1')
-        
-        except:
-            None
-
-
-if args.silence[0] and args.silence[1]:
-    with open(laugh_list, 'r') as csvFile:
-        reader = csv.reader(csvFile)
-        data = []
-        for row in reader:
-            data.append(row)
-        csvFile.close()
-
-    clean_data = []
-    for i in range(0,len(data)):
-        if len(data[i]) == 3:
-            clean_data.append(data[i])
-
-    with open(laugh_list, 'w') as csvFile:
-        writer = csv.writer(csvFile)
-        data = writer.writerows(clean_data)
-        csvFile.close()
+        os.system('python "' + laugher + '" --model "' + model_path + '" --mute-laughs "' + directory_of_episodes + episode + '" "' + output_directory + episode[0:-4] + '_laughless.wav' + '"')
